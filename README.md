@@ -1,2 +1,3 @@
 # DynamicGuiConverter
-Convert dynamic gui 3.x guis to 4.x
+
+Convert DynamicGui 3.x guis to 4.x
