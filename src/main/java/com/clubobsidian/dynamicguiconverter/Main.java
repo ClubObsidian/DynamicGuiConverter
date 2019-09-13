@@ -10,6 +10,7 @@ import org.apache.commons.io.FileUtils;
 import com.clubobsidian.dynamicguiconverter.converter.Converter;
 import com.clubobsidian.dynamicguiconverter.converter.transformer.SetLoreTransformer;
 import com.clubobsidian.wrappy.Configuration;
+import com.clubobsidian.wrappy.ConfigurationSection;
 
 public class Main {
 
@@ -83,6 +84,10 @@ public class Main {
 
 					//Function types
 
+					//Fail
+					List<String> fail = new ArrayList<>();
+					fail.add("fail");
+					
 					//Load
 					List<String> load = new ArrayList<>();
 					load.add("load");
@@ -103,7 +108,7 @@ public class Main {
 					List<String> middleClick = new ArrayList<>();
 					middleClick.add("middle");
 
-					new Converter()
+					Converter converter = new Converter()
 					.addTransformer(new SetLoreTransformer())
 					.inputConfig(inputConfig)
 					.outputConfig(outputConfig)
@@ -142,10 +147,36 @@ public class Main {
 					.inputPath(path + "middleclick-functions")
 					.outputPath(functionPath + "middleclick.functions")
 					.convert();
+					
+					ConfigurationSection slotSection = inputConfig.getConfigurationSection(String.valueOf(i));
+					for(String key : slotSection.getKeys())
+					{
+						if(key.endsWith("-failfunctions"))
+						{
+							
+						}
+						else if(key.endsWith("-loadfailfunctions"))
+						{
+							String prefix = getPrefixFromFunction(key);
+							
+							converter
+							.setIfPathExists(path + key, functionPath + "load." + prefix + "-fail-load.type", fail)
+							.inputPath(path + key)
+							.outputPath(functionPath + "load." + prefix +"-fail-load.functions")
+							.convert()
+							.setIfPathExists(path + key, functionPath + "load." + prefix +"-fail-load.fail-on", prefix);
+						}
+					}
 				}
 			}
 
 			outputConfig.save();
 		}
+	}
+	
+	private static String getPrefixFromFunction(String function)
+	{
+		String[] split = function.split("-");
+		return split[0];
 	}
 }
