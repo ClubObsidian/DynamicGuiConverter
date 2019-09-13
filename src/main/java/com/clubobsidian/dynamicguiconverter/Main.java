@@ -147,24 +147,45 @@ public class Main {
 					.inputPath(path + "middleclick-functions")
 					.outputPath(functionPath + "middleclick.functions")
 					.convert();
-					
+
 					ConfigurationSection slotSection = inputConfig.getConfigurationSection(String.valueOf(i));
 					for(String key : slotSection.getKeys())
 					{
 						if(key.endsWith("-failfunctions"))
 						{
+							List<String> clickNames = new ArrayList<>();
+							clickNames.add("click");
+							clickNames.add("left");
+							clickNames.add("right");
+							clickNames.add("middle");
 							
+							String prefix = getPrefixFromFunction(key);
+							for(String name : clickNames)
+							{
+								if(outputConfig.get(functionPath + name) != null)
+								{
+									String failPath = functionPath + name + "." + prefix + "-fail.";
+									
+									converter
+									.setIfPathExists(path + key, failPath + "type", fail)
+									.inputPath(path + key)
+									.outputPath(failPath + "functions")
+									.convert()
+									.setIfPathExists(path + key, failPath + "fail-on", prefix);
+								}
+							}
 						}
 						else if(key.endsWith("-loadfailfunctions"))
 						{
 							String prefix = getPrefixFromFunction(key);
+							String failPath = functionPath + "load." + prefix + "-fail-load.";
 							
 							converter
-							.setIfPathExists(path + key, functionPath + "load." + prefix + "-fail-load.type", fail)
+							.setIfPathExists(path + key, failPath + "type", fail)
 							.inputPath(path + key)
-							.outputPath(functionPath + "load." + prefix +"-fail-load.functions")
+							.outputPath(failPath + "functions")
 							.convert()
-							.setIfPathExists(path + key, functionPath + "load." + prefix +"-fail-load.fail-on", prefix);
+							.setIfPathExists(path + key, failPath + "fail-on", prefix);
 						}
 					}
 				}
