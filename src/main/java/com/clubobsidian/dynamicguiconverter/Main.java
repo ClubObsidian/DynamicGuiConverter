@@ -92,9 +92,9 @@ public class Main {
 					List<String> load = new ArrayList<>();
 					load.add("load");
 
-					//All
+					//All clicks
 					List<String> allClicks = new ArrayList<>();
-					allClicks.add("all");
+					allClicks.add("click");
 
 					//Left
 					List<String> leftClick = new ArrayList<>();
